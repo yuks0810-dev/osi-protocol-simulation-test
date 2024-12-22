@@ -8,14 +8,13 @@
 
 #define PORT 8081
 #define SERVER_IP "127.0.0.1"
-#define NUM_MESSAGES 100 // 送信するメッセージの数
+#define NUM_MESSAGES 100
 
 int main() {
     int sockfd;
     struct sockaddr_in servaddr;
     char message[50];
 
-    // ソケットファイルディスクリプタの作成
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("socket creation failed");
         exit(EXIT_FAILURE);
@@ -31,7 +30,6 @@ int main() {
         return -1;
     }
 
-    // 高速にメッセージを送信
     for (int i = 1; i <= NUM_MESSAGES; i++) {
         snprintf(message, sizeof(message), "Message %d from client", i);
         if (sendto(sockfd, message, strlen(message), 0, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {

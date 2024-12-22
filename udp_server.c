@@ -15,7 +15,6 @@ int main() {
     struct sockaddr_in servaddr, cliaddr;
     char buffer[1024];
     
-    // ソケットファイルディスクリプタの作成
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("socket creation failed");
         exit(EXIT_FAILURE);
@@ -28,7 +27,6 @@ int main() {
     servaddr.sin_addr.s_addr = INADDR_ANY;
     servaddr.sin_port = htons(PORT);
 
-    // ソケットをアドレスとポートにバインド
     if (bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
         perror("bind failed");
         close(sockfd);
@@ -41,24 +39,18 @@ int main() {
         socklen_t len = sizeof(cliaddr);
         int n;
 
-        // データを受信
         n = recvfrom(sockfd, (char *)buffer, sizeof(buffer) - 1, 0, (struct sockaddr *)&cliaddr, &len);
         if (n < 0) {
             perror("recvfrom failed");
-            continue; // エラーが発生してもサーバーを停止せずに次のメッセージを待機
+            continue;
         }
 
         buffer[n] = '\0';
         printf("Received: %s from %s:%d\n", buffer, inet_ntoa(cliaddr.sin_addr), ntohs(cliaddr.sin_port));
 
-        // 処理の遅延をシミュレーション
-        usleep(PROCESSING_DELAY_MS * 1000); // マイクロ秒単位
-
-        // メッセージを受信したことを確認（実際のACKは送信しない）
-        // ドロップを確認するためにサーバーのみでログを確認します
+        usleep(PROCESSING_DELAY_MS * 1000);
     }
 
-    // ソケットを閉じる（実際には無限ループのため到達しません）
     close(sockfd);
     return 0;
 }
